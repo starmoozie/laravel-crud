@@ -1,0 +1,1 @@
+{{-- Select2 Multiple Ajax Starmoozie CRUD filter --}}
