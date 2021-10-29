@@ -272,6 +272,8 @@ function tree_element($entry, $key, $all_entries, $crud)
                 type: "success",
                 text: "<strong>{{ trans('starmoozie::crud.reorder_success_title') }}</strong><br>{{ trans('starmoozie::crud.reorder_success_message') }}"
             }).show();
+
+            location.reload();
           })
         .fail(function() {
             new Noty({
