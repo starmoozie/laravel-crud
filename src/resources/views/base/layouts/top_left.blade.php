@@ -39,9 +39,11 @@
 
   </div><!-- ./app-body -->
 
+  @if(config('starmoozie.base.show_footer'))
   <footer class="{{ config('starmoozie.base.footer_class') }}">
     @include(starmoozie_view('inc.footer'))
   </footer>
+  @endif
 
   @yield('before_scripts')
   @stack('before_scripts')

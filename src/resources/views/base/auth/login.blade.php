@@ -4,7 +4,7 @@
     <div class="row justify-content-center">
         <div class="col-12 col-md-8 col-lg-4">
             <h3 class="text-center mb-4">{{ trans('starmoozie::base.login') }}</h3>
-            <div class="card">
+            <div class="card shadow">
                 <div class="card-body">
                     <form class="col-md-12 p-t-10" role="form" method="POST" action="{{ route('starmoozie.auth.login') }}">
                         {!! csrf_field() !!}
@@ -49,7 +49,7 @@
 
                         <div class="form-group">
                             <div>
-                                <button type="submit" class="btn btn-block btn-primary">
+                                <button type="submit" class="btn btn-block shadow btn-primary">
                                     {{ trans('starmoozie::base.login') }}
                                 </button>
                             </div>

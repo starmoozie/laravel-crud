@@ -65,7 +65,7 @@ function tree_element($entry, $key, $all_entries, $crud)
 
 <div class="row mt-4">
     <div class="{{ $crud->getReorderContentClass() }}">
-        <div class="card p-4">
+        <div class="card p-4 shadow">
             <p>{{ trans('starmoozie::crud.reorder_text') }}</p>
 
             <ol class="sortable mt-0">
@@ -82,7 +82,7 @@ function tree_element($entry, $key, $all_entries, $crud)
 
         </div><!-- /.card -->
 
-        <button id="toArray" class="btn btn-success" data-style="zoom-in"><i class="la la-save"></i> {{ trans('starmoozie::crud.save') }}</button>
+        <button id="toArray" class="btn btn-sm btn-success shadow" data-style="zoom-in"><i class="la la-save"></i> {{ trans('starmoozie::crud.save') }}</button>
     </div>
 </div>
 @endsection

@@ -47,7 +47,7 @@
           @include('crud::inc.filters_navbar')
         @endif
 
-        <table id="crudTable" class="bg-white table table-striped table-hover nowrap rounded shadow-xs border-xs mt-2" cellspacing="0">
+        <table id="crudTable" class="bg-white table table-striped table-hover nowrap rounded shadow border-xs mt-2" cellspacing="0">
             <thead>
               <tr>
                 {{-- Table columns --}}
@@ -107,18 +107,6 @@
             </thead>
             <tbody>
             </tbody>
-            <tfoot>
-              <tr>
-                {{-- Table columns --}}
-                @foreach ($crud->columns() as $column)
-                  <th>{!! $column['label'] !!}</th>
-                @endforeach
-
-                @if ( $crud->buttons()->where('stack', 'line')->count() )
-                  <th>{{ trans('starmoozie::crud.actions') }}</th>
-                @endif
-              </tr>
-            </tfoot>
           </table>
 
           @if ( $crud->buttons()->where('stack', 'bottom')->count() )

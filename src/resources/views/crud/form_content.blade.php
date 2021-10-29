@@ -5,7 +5,7 @@
     @include('crud::inc.show_tabbed_fields')
     <input type="hidden" name="current_tab" value="{{ Str::slug($crud->getTabs()[0]) }}" />
 @else
-  <div class="card">
+  <div class="card shadow">
     <div class="card-body row">
       @include('crud::inc.show_fields', ['fields' => $crud->fields()])
     </div>

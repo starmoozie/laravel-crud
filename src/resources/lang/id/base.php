@@ -32,7 +32,7 @@ return [
     'click_here_to_reset'    => 'Klik Disini untuk menyetel ulang kata sandi',
     'change_password'        => 'Ganti kata sandi',
     'unauthorized'           => 'Tidak Sah.',
-    'dashboard'              => 'Dasbor',
+    'dashboard'              => 'Beranda',
     'handcrafted_by'         => 'Buatan tangan oleh',
     'powered_by'             => 'Dipersembahkan oleh',
     'my_account'             => 'Akun saya',

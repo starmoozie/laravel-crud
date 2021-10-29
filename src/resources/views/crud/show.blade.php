@@ -48,7 +48,7 @@
 			</div>
 	    @endif
 	    <div class="card no-padding no-border">
-			<table class="table table-striped mb-0">
+			<table class="table table-striped mb-0 shadow">
 		        <tbody>
 		        @foreach ($crud->columns() as $column)
 		            <tr>

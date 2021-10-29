@@ -2,7 +2,7 @@
 	@if (!$crud->model->translationEnabled())
 
 	<!-- Single edit button -->
-	<a href="{{ url($crud->route.'/'.$entry->getKey().'/edit') }}" class="btn btn-sm btn-link"><i class="la la-edit"></i> {{ trans('starmoozie::crud.edit') }}</a>
+	<a href="{{ url($crud->route.'/'.$entry->getKey().'/edit') }}" class="btn btn-sm btn-warning shadow"><i class="la la-edit"></i> {{ trans('starmoozie::crud.edit') }}</a>
 
 	@else
 
