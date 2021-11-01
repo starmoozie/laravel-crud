@@ -1,5 +1,19 @@
 <?php
 
+if (! function_exists('toUpper')) {
+    /**
+     * force to Upper String.
+     *
+     * @param $string
+     *
+     * @return string
+     */
+    function toUpper($string)
+    {
+        return ucwords(strtolower($string));
+    }
+}
+
 if (! function_exists('starmoozie_url')) {
     /**
      * Appends the configured starmoozie prefix and returns
