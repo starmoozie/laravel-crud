@@ -1,5 +1,5 @@
 @if ($crud->hasAccess('bulkClone') && $crud->get('list.bulkActions'))
-	<a href="javascript:void(0)" onclick="bulkCloneEntries(this)" class="btn btn-sm btn-secondary bulk-button"><i class="la la-copy"></i> {{ trans('starmoozie::crud.clone') }}</a>
+	<a href="javascript:void(0)" onclick="bulkCloneEntries(this)" class="btn btn-sm btn-secondary bulk-button shadow-sm"><i class="la la-copy"></i> {{ trans('starmoozie::crud.clone') }}</a>
 @endif
 
 @push('after_scripts')

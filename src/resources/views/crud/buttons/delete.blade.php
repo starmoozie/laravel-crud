@@ -1,5 +1,5 @@
 @if ($crud->hasAccess('delete'))
-	<a href="javascript:void(0)" onclick="deleteEntry(this)" data-route="{{ url($crud->route.'/'.$entry->getKey()) }}" class="btn btn-sm btn-danger shadow" data-button-type="delete"><i class="la la-trash"></i> {{ trans('starmoozie::crud.delete') }}</a>
+	<a href="javascript:void(0)" onclick="deleteEntry(this)" data-route="{{ url($crud->route.'/'.$entry->getKey()) }}" class="btn btn-sm shadow-sm btn-danger" data-button-type="delete"><i class="la la-trash"></i> {{ trans('starmoozie::crud.delete') }}</a>
 @endif
 
 {{-- Button Javascript --}}
@@ -20,22 +20,7 @@
 		  title: "{!! trans('starmoozie::base.warning') !!}",
 		  text: "{!! trans('starmoozie::crud.delete_confirm') !!}",
 		  icon: "warning",
-		  buttons: {
-				confirm: {
-					text: "{!! trans('starmoozie::crud.delete') !!}",
-					value: true,
-					visible: true,
-					className: "btn btn-sm btn-danger shadow",
-					closeModal: true
-				},
-				cancel: {
-					text: "{!! trans('starmoozie::crud.cancel') !!}",
-					value: false,
-					visible: true,
-					className: "btn btn-sm btn-default shadow",
-					closeModal: true
-				}
-			},
+		  buttons: ["{!! trans('starmoozie::crud.cancel') !!}", "{!! trans('starmoozie::crud.delete') !!}"],
 		  dangerMode: true,
 		}).then((value) => {
 			if (value) {
@@ -59,6 +44,8 @@
 		                    type: "success",
 		                    text: "{!! '<strong>'.trans('starmoozie::crud.delete_confirmation_title').'</strong><br>'.trans('starmoozie::crud.delete_confirmation_message') !!}"
 		                  }).show();
+
+                          $('#crudTable').DataTable().ajax.reload();
 
 			              // Hide the modal, if any
 			              $('.modal').modal('hide');

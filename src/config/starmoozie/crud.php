@@ -37,7 +37,7 @@ return [
             // use false to never force localStorage clear. (default)
             // keep in mind: User can clear their localStorage whenever they want.
 
-            'persistentTableDuration' => false,
+            'persistentTableDuration' => 60,
 
             // How many items should be shown by default by the Datatable?
             // This value can be overwritten on a specific CRUD by calling
@@ -76,7 +76,7 @@ return [
             'tabsType' => 'horizontal', //options: horizontal, vertical
 
             // How would you like the validation errors to be shown?
-            'groupedErrors' => true,
+            'groupedErrors' => false,
             'inlineErrors'  => true,
 
             // when the page loads, put the cursor on the first input?
@@ -91,7 +91,7 @@ return [
             'showSaveActionChange' => true, //options: true, false
 
             // Should we show a cancel button to the user?
-            'showCancelButton' => true,
+            'showCancelButton' => false,
 
             // Before saving the entry, how would you like the request to be stripped?
             // - false - ONLY save inputs that have fields (safest)
@@ -112,7 +112,7 @@ return [
             'tabsType' => 'horizontal', //options: horizontal, vertical
 
             // How would you like the validation errors to be shown?
-            'groupedErrors' => true,
+            'groupedErrors' => false,
             'inlineErrors'  => true,
 
             // when the page loads, put the cursor on the first input?
@@ -127,7 +127,7 @@ return [
             'showSaveActionChange' => true, //options: true, false
 
             // Should we show a cancel button to the user?
-            'showCancelButton' => true,
+            'showCancelButton' => false,
 
             // Before saving the entry, how would you like the request to be stripped?
             // - false - Save ONLY inputs that have a field (safest, default);

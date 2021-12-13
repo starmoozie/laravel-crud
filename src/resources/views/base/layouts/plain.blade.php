@@ -11,11 +11,9 @@
   @yield('content')
   </div>
 
-  @if(config('starmoozie.base.show_footer'))
   <footer class="app-footer sticky-footer">
     @include('starmoozie::inc.footer')
   </footer>
-  @endif
 
   @yield('before_scripts')
   @stack('before_scripts')

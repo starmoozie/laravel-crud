@@ -22,7 +22,7 @@ return [
 
     // Create form
     'add'                 => 'Tambah',
-    'back_to_all'         => 'Kembali ke semua ',
+    'back_to_all'         => 'Kembali',
     'cancel'              => 'Batal',
     'add_a_new'           => 'Tambahkan yang baru ',
 
@@ -114,7 +114,7 @@ return [
     'update_success' => 'Item berhasil diubah.',
 
     // CRUD reorder view
-    'reorder'                      => 'Susun ulang',
+    'reorder'                      => 'Susun Ulang',
     'reorder_text'                 => 'Gunakan seret & lepas untuk menyusun ulang.',
     'reorder_success_title'        => 'Selesai',
     'reorder_success_message'      => 'Susunan Anda telah disimpan.',

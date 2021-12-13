@@ -1,3 +1,12 @@
+<?php
+    $model        = config('starmoozie.base.user_model_fqn');
+    $model        = new $model();
+    $column       = 'mobile';
+    $check_column = Schema::hasColumn($model->getTable(), $column);
+    $mobile_label = ucwords($column);
+    $mobile_field = $column;
+?>
+
 @extends(starmoozie_view('blank'))
 
 @section('after_styles')
@@ -53,7 +62,7 @@
 
                 {!! csrf_field() !!}
 
-                <div class="card padding-10">
+                <div class="card padding-10 shadow-sm">
 
                     <div class="card-header">
                         {{ trans('starmoozie::base.update_account_info') }}
@@ -61,29 +70,56 @@
 
                     <div class="card-body starmoozie-profile-form bold-labels">
                         <div class="row">
-                            <div class="col-md-6 form-group">
+                            <div class="col-md-{{ $check_column ? '4' : '6' }} form-group">
                                 @php
                                     $label = trans('starmoozie::base.name');
                                     $field = 'name';
                                 @endphp
                                 <label class="required">{{ $label }}</label>
-                                <input required class="form-control" type="text" name="{{ $field }}" value="{{ old($field) ? old($field) : $user->$field }}">
+                                <div class="input-group mb-3">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">
+                                            <i class="la la-user"></i>
+                                        </span>
+                                    </div>
+                                    <input required class="form-control" type="text" name="{{ $field }}" value="{{ old($field) ? old($field) : $user->$field }}">
+                                </div>
                             </div>
 
-                            <div class="col-md-6 form-group">
+                            <div class="col-md-{{ $check_column ? '4' : '6' }} form-group">
                                 @php
                                     $label = config('starmoozie.base.authentication_column_name');
                                     $field = starmoozie_authentication_column();
                                 @endphp
                                 <label class="required">{{ $label }}</label>
-                                <input required class="form-control" type="{{ starmoozie_authentication_column()=='email'?'email':'text' }}" name="{{ $field }}" value="{{ old($field) ? old($field) : $user->$field }}">
+                                <div class="input-group mb-3">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">
+                                            <i class="la la-envelope"></i>
+                                        </span>
+                                    </div>
+                                    <input required class="form-control" type="{{ starmoozie_authentication_column()=='email'?'email':'text' }}" name="{{ $field }}" value="{{ old($field) ? old($field) : $user->$field }}">
+                                </div>
                             </div>
+
+                            @if($check_column)
+                                <div class="col-md-4 form-group">
+                                    <label class="required">{{ $mobile_label }}</label>
+                                    <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">
+                                                <i class="fas fa-mobile-alt"></i>
+                                            </span>
+                                        </div>
+                                        <input required class="form-control" type="text" pattern="[0-9]{6,15}" name="{{ $mobile_field }}" value="{{ old($mobile_field) ? old($mobile_field) : $user->$mobile_field }}">
+                                    </div>
+                                </div>
+                            @endif
                         </div>
                     </div>
 
                     <div class="card-footer">
-                        <button type="submit" class="btn btn-sm btn-success shadow"><i class="la la-save"></i> {{ trans('starmoozie::base.save') }}</button>
-                        <a href="{{ starmoozie_url() }}" class="btn">{{ trans('starmoozie::base.cancel') }}</a>
+                        <button type="submit" class="btn btn-primary btn-sm shadow-sm"><i class="la la-save"></i> {{ trans('starmoozie::base.save') }}</button>
                     </div>
                 </div>
 
@@ -96,7 +132,7 @@
 
                 {!! csrf_field() !!}
 
-                <div class="card padding-10">
+                <div class="card padding-10 shadow-sm">
 
                     <div class="card-header">
                         {{ trans('starmoozie::base.change_password') }}
@@ -134,8 +170,7 @@
                     </div>
 
                     <div class="card-footer">
-                            <button type="submit" class="btn btn-sm btn-success shadow"><i class="la la-save"></i> {{ trans('starmoozie::base.change_password') }}</button>
-                            <a href="{{ starmoozie_url() }}" class="btn">{{ trans('starmoozie::base.cancel') }}</a>
+                        <button type="submit" class="btn btn-primary btn-sm shadow-sm"><i class="la la-save"></i> {{ trans('starmoozie::base.change_password') }}</button>
                     </div>
 
                 </div>

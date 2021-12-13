@@ -24,7 +24,7 @@ return [
     // ----
 
     // Project name. Shown in the window title.
-    'project_name' => 'Starmoozie Admin Panel',
+    'project_name' => ENV('APP_NAME') . ' Admin Panel',
 
     // When clicking on the admin panel's top-left logo/name,
     // where should the user be redirected?
@@ -44,6 +44,7 @@ return [
     'styles' => [
         'packages/starmoozie/base/css/bundle.css', // has primary color electric purple (starmoozie default)
         // 'packages/starmoozie/base/css/blue-bundle.css', // has primary color blue
+        'css/custom.css',
 
         // Here's what's inside the bundle:
         // 'packages/@digitallyhappy/backstrap/css/style.min.css',
@@ -53,6 +54,7 @@ return [
         // Load the fonts separately (so that you can replace them at will):
         'packages/source-sans-pro/source-sans-pro.css',
         'packages/line-awesome/css/line-awesome.min.css',
+        'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.2/css/all.min.css',
 
         // Example (the fonts above, loaded from CDN instead)
         // 'https://maxcdn.icons8.com/fonts/line-awesome/1.1/css/line-awesome-font-awesome.min.css',
@@ -78,7 +80,7 @@ return [
     'breadcrumbs' => true,
 
     // Horizontal navbar classes. Helps make the admin panel look similar to your project's design.
-    'header_class' => 'app-header bg-white navbar shadow-sm',
+    'header_class' => 'app-header bg-primary border-0 header-fixed navbar-color navbar shadow-sm',
     // For background colors use: bg-dark, bg-primary, bg-secondary, bg-danger, bg-warning, bg-success, bg-info, bg-blue, bg-light-blue, bg-indigo, bg-purple, bg-pink, bg-red, bg-orange, bg-yellow, bg-green, bg-teal, bg-cyan, bg-white
     // For links to be visible on different background colors use: "navbar-dark", "navbar-light", "navbar-color"
 
@@ -87,11 +89,11 @@ return [
     // ----
 
     // Body element classes.
-    'body_class' => 'app aside-menu-fixed sidebar-lg-show',
+    'body_class' => 'app aside-menu-fixed sidebar-lg-show bg-white',
     // Try sidebar-hidden, sidebar-fixed, sidebar-compact, sidebar-lg-show
 
     // Sidebar element classes.
-    'sidebar_class' => 'sidebar bg-white sidebar-pills shadow',
+    'sidebar_class' => 'sidebar sidebar-pills bg-dark shadow d-print-none',
     // Remove "sidebar-transparent" for standard sidebar look
     // Try "sidebar-light" or "sidebar-dark" for dark/light links
     // You can also add a background class like bg-dark, bg-primary, bg-secondary, bg-danger, bg-warning, bg-success, bg-info, bg-blue, bg-light-blue, bg-indigo, bg-purple, bg-pink, bg-red, bg-orange, bg-yellow, bg-green, bg-teal, bg-cyan
@@ -113,8 +115,6 @@ return [
 
     // Show powered by Laravel Starmoozie in the footer? true/false
     'show_powered_by' => false,
-
-    'show_footer'   => false,
 
     // -------
     // SCRIPTS
@@ -206,7 +206,7 @@ return [
 
     // Set this to false if you would like to skip adding the password recovery routes
     // (you then need to manually define the routes in your web.php)
-    'setup_password_recovery_routes' => true,
+    'setup_password_recovery_routes' => false,
 
     /*
     |--------------------------------------------------------------------------
@@ -240,6 +240,7 @@ return [
     'user_model_fqn' => config('auth.providers.users.model'),
     // 'user_model_fqn' => App\User::class, // works on Laravel <= 7
     // 'user_model_fqn' => App\Models\User::class, // works on Laravel >= 8
+    // 'user_model_fqn' => \Starmoozie\LaravelMenuPermission\app\Models\User::class, // works if using starmoozie/laravel-menu-permission
 
     // The classes for the middleware to check if the visitor is an admin
     // Can be a single class or an array of classes

@@ -33,7 +33,7 @@ return [
     'change_password'        => 'Ganti kata sandi',
     'unauthorized'           => 'Tidak Sah.',
     'dashboard'              => 'Beranda',
-    'handcrafted_by'         => 'Buatan tangan oleh',
+    'handcrafted_by'         => 'Dibuat oleh',
     'powered_by'             => 'Dipersembahkan oleh',
     'my_account'             => 'Akun saya',
     'update_account_info'    => 'Perbarui Info Akun',

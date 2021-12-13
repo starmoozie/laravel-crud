@@ -15,10 +15,10 @@
 <div class="container-fluid">
     <h2>
         <span class="text-capitalize">{!! $crud->getHeading() ?? $crud->entity_name_plural !!}</span>
-        <small>{!! $crud->getSubheading() ?? trans('starmoozie::crud.reorder').' '.$crud->entity_name_plural !!}.</small>
+        <small>{!! $crud->getSubheading() ?? trans('starmoozie::crud.reorder') !!}.</small>
 
         @if ($crud->hasAccess('list'))
-          <small><a href="{{ url($crud->route) }}" class="d-print-none font-sm"><i class="la la-angle-double-left"></i> {{ trans('starmoozie::crud.back_to_all') }} <span>{{ $crud->entity_name_plural }}</span></a></small>
+          <small><a href="{{ url($crud->route) }}" class="d-print-none font-sm"><i class="la la-angle-double-left"></i> {{ trans('starmoozie::crud.back_to_all') }}</a></small>
         @endif
     </h2>
 </div>
@@ -65,7 +65,7 @@ function tree_element($entry, $key, $all_entries, $crud)
 
 <div class="row mt-4">
     <div class="{{ $crud->getReorderContentClass() }}">
-        <div class="card p-4 shadow">
+        <div class="card p-4">
             <p>{{ trans('starmoozie::crud.reorder_text') }}</p>
 
             <ol class="sortable mt-0">
@@ -82,7 +82,7 @@ function tree_element($entry, $key, $all_entries, $crud)
 
         </div><!-- /.card -->
 
-        <button id="toArray" class="btn btn-sm btn-success shadow" data-style="zoom-in"><i class="la la-save"></i> {{ trans('starmoozie::crud.save') }}</button>
+        <button id="toArray" class="btn btn-primary btn-sm shadow-sm" data-style="zoom-in"><i class="la la-save"></i> {{ trans('starmoozie::crud.save') }}</button>
     </div>
 </div>
 @endsection
@@ -272,7 +272,6 @@ function tree_element($entry, $key, $all_entries, $crud)
                 type: "success",
                 text: "<strong>{{ trans('starmoozie::crud.reorder_success_title') }}</strong><br>{{ trans('starmoozie::crud.reorder_success_message') }}"
             }).show();
-
             location.reload();
           })
         .fail(function() {
