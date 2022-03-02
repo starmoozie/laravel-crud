@@ -204,10 +204,11 @@ return [
     // (you then need to manually define the routes in your web.php)
     'setup_my_account_routes' => true,
 
-    'setup_permission_route' => true,
-    'setup_menu_route' => true,
-    'setup_role_route' => true,
-    'setup_user_route' => true,
+    'setup_permission_url' => true,
+    'setup_menu_url' => true,
+    'setup_role_url' => true,
+    'setup_user_url' => false,
+    'setup_route_url' => true,
 
     // Set this to false if you would like to skip adding the password recovery routes
     // (you then need to manually define the routes in your web.php)

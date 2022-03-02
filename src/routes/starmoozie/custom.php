@@ -13,5 +13,18 @@ Route::group([
         (array) config('starmoozie.base.middleware_key', 'admin')
     ),
     'namespace'  => 'App\Http\Controllers\Admin',
-], function () { // custom admin routes
-}); // this should be the absolute last line of this file
+], function () {
+
+    if (\Illuminate\Support\Facades\Schema::hasTable('menu')) {
+        foreach (\Starmoozie\LaravelMenuPermission\app\Models\Menu::whereNotNull('controller')->get() as $route) {
+            Route::crud($route->route, $route->controller);
+        }
+    }
+
+    if (\Illuminate\Support\Facades\Schema::hasTable('route')) {
+        foreach (\Starmoozie\LaravelMenuPermission\app\Models\Route::dashboardApi()->get() as $route) {
+            Route::crud($route->route, $route->controller);
+        }
+    }
+
+});
