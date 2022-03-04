@@ -25,6 +25,7 @@
                 filter-minimum-input-length="{{ $filter->options['minimum_input_length'] ?? 2 }}"
                 filter-method="{{ $filter->options['method'] ?? 'GET' }}"
                 filter-quiet-time="{{ $filter->options['quiet_time'] }}"
+				data-dependencies="{{ isset($filter->options['dependencies']) ? json_encode(Arr::wrap($filter->options['dependencies'])) : json_encode([]) }}"
             >
 				@if (Request::get($filter->name))
 					<option value="{{ Request::get($filter->name) }}" selected="selected"> {{ Request::get($filter->name.'_text') ?? 'Previous selection' }} </option>
@@ -97,6 +98,7 @@
                 var filterKey = $(this).attr('data-filter-key');
                 var selectAttribute = $(this).attr('data-select-attribute');
                 var selectKey = $(this).attr('data-select-key');
+				var dependencies = JSON.parse($(this).attr('data-dependencies'));
 
             	$(this).select2({
 				    theme: "bootstrap",
@@ -111,6 +113,18 @@
 				        dataType: 'json',
 				        type: $(this).attr('filter-method'),
 				        delay: $(this).attr('filter-quiet-time'),
+
+						data: function (term) {
+							return {
+								q: term.term,
+								form: dependencies.map( value => {
+									return {
+										name: value,
+										value : $(`#filter_${value}`).val()
+									}
+								}),
+							};
+						},
 
 				        processResults: function (data) {
                             //it's a paginated result
