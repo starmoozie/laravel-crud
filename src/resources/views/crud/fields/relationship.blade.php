@@ -6,8 +6,8 @@
     }
     $field['multiple'] = $field['multiple'] ?? $crud->relationAllowsMultiple($field['relation_type']);
     $field['ajax'] = $field['ajax'] ?? isset($field['data_source']);
-    $field['placeholder'] = $field['placeholder'] ?? ($field['multiple'] ? trans('starmoozie::crud.select_entries') : trans('starmoozie::crud.select_entry'));
     $field['attribute'] = $field['attribute'] ?? (new $field['model'])->identifiableAttribute();
+    $field['placeholder'] = $field['placeholder'] ?? ($field['multiple'] ? trans('starmoozie::crud.select_entries', ['attribute' => $field['name']]) : trans('starmoozie::crud.select_entry', ['attribute' => $field['name']]));
     $field['allows_null'] = $field['allows_null'] ?? $crud->model::isColumnNullable($field['name']);
     // Note: isColumnNullable returns true if column is nullable in database, also true if column does not exist.
 

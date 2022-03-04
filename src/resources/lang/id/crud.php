@@ -143,8 +143,8 @@ return [
     'external_link'             => 'Tautan eksternal',
     'choose_file'               => 'Pilih File',
     'new_item'                  => 'Item baru',
-    'select_entry'              => 'Pilih masukan',
-    'select_entries'            => 'Pilih masukan',
+    'select_entry'              => 'Pilih :Attribute',
+    'select_entries'            => 'Pilih :Attribute',
 
     //Table field
     'table_cant_add'    => 'Tidak dapat menambahkan :entity yang baru',

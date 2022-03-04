@@ -161,8 +161,8 @@ return [
     'external_link'             => 'External link',
     'choose_file'               => 'Choose file',
     'new_item'                  => 'New Item',
-    'select_entry'              => 'Select an entry',
-    'select_entries'            => 'Select entries',
+    'select_entry'              => 'Select :Attribute',
+    'select_entries'            => 'Select :Attribute',
 
     //Table field
     'table_cant_add'    => 'Cannot add new :entity',
