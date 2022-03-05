@@ -17,7 +17,7 @@ return [
 
     // stores pagination and filters in localStorage for two hours
     // whenever the user tries to see that page, starmoozie loads the previous pagination and filtration
-    'persistentTable' => true,
+    'persistentTable' => false,
 
     // show search bar in the top-right corner?
     'searchableTable' => true,
@@ -51,5 +51,5 @@ return [
     // that allows the user to erase local storage for that datatable,
     // thus clearing any searching, filtering or pagination that has been
     // remembered and persisted using persistentTable
-    'resetButton' => true,
+    'resetButton' => false,
 ];
