@@ -18,7 +18,7 @@
         <small>{!! $crud->getSubheading() ?? trans('starmoozie::crud.add') !!}.</small>
 
         @if ($crud->hasAccess('list'))
-          <small><a href="{{ url($crud->route) }}" class="d-print-none font-sm"><i class="la la-angle-double-{{ config('starmoozie.base.html_direction') == 'rtl' ? 'right' : 'left' }}"></i> {{ trans('starmoozie::crud.back_to_all') }}</a></small>
+          <small><a href="{{ url($crud->route) }}" class="d-print-none font-sm"><i class="la la-angle-double-{{ config('starmoozie.base.html_direction') == 'rtl' ? 'right' : 'left' }}"></i> {{ trans('starmoozie::crud.back_to_all') }} </a></small>
         @endif
 	  </h2>
 	</section>
@@ -45,7 +45,8 @@
 		      @else
 		      	@include('crud::form_content', [ 'fields' => $crud->fields(), 'action' => 'create' ])
 		      @endif
-
+                <!-- This makes sure that all field assets are loaded. -->
+                <div class="d-none" id="parentLoadedAssets">{{ json_encode(Assets::loaded()) }}</div>
 	          @include('crud::inc.form_save_buttons')
 		  </form>
 	</div>

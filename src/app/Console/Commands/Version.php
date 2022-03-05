@@ -36,7 +36,7 @@ class Version extends Command
         $this->line(\PackageVersions\Versions::getVersion('laravel/framework'));
         $this->line('');
 
-        $this->comment('### STARMOOZIE VERSION:');
+        $this->comment('### BACKPACK VERSION:');
         $this->line(\PackageVersions\Versions::getVersion('starmoozie/laravel-crud'));
         $this->line('');
     }

@@ -18,7 +18,7 @@
         <small>{!! $crud->getSubheading() ?? trans('starmoozie::crud.reorder') !!}.</small>
 
         @if ($crud->hasAccess('list'))
-          <small><a href="{{ url($crud->route) }}" class="d-print-none font-sm"><i class="la la-angle-double-left"></i> {{ trans('starmoozie::crud.back_to_all') }}</a></small>
+          <small><a href="{{ url($crud->route) }}" class="d-print-none font-sm"><i class="la la-angle-double-left"></i> {{ trans('starmoozie::crud.back_to_all') }} </a></small>
         @endif
     </h2>
 </div>
@@ -82,7 +82,7 @@ function tree_element($entry, $key, $all_entries, $crud)
 
         </div><!-- /.card -->
 
-        <button id="toArray" class="btn btn-primary btn-sm shadow-sm" data-style="zoom-in"><i class="la la-save"></i> {{ trans('starmoozie::crud.save') }}</button>
+        <button id="toArray" class="btn btn-success" data-style="zoom-in"><i class="la la-save"></i> {{ trans('starmoozie::crud.save') }}</button>
     </div>
 </div>
 @endsection
@@ -218,13 +218,9 @@ function tree_element($entry, $key, $all_entries, $crud)
       color: #c33;
     }
 </style>
-<link rel="stylesheet" href="{{ asset('packages/starmoozie/crud/css/crud.css').'?v='.config('starmoozie.base.cachebusting_string') }}">
-<link rel="stylesheet" href="{{ asset('packages/starmoozie/crud/css/reorder.css').'?v='.config('starmoozie.base.cachebusting_string') }}">
 @endsection
 
 @section('after_scripts')
-<script src="{{ asset('packages/starmoozie/crud/js/crud.js').'?v='.config('starmoozie.base.cachebusting_string') }}" type="text/javascript" ></script>
-<script src="{{ asset('packages/starmoozie/crud/js/reorder.js').'?v='.config('starmoozie.base.cachebusting_string') }}" type="text/javascript" ></script>
 <script src="{{ asset('packages/jquery-ui-dist/jquery-ui.min.js') }}" type="text/javascript" ></script>
 <script src="{{ asset('packages/nestedSortable/jquery.mjs.nestedSortable2.js') }}" type="text/javascript" ></script>
 
@@ -265,14 +261,13 @@ function tree_element($entry, $key, $all_entries, $crud)
         $.ajax({
             url: '{{ url(Request::path()) }}',
             type: 'POST',
-            data: { tree: arraied },
+            data: { tree: JSON.stringify(arraied) },
         })
         .done(function() {
             new Noty({
                 type: "success",
                 text: "<strong>{{ trans('starmoozie::crud.reorder_success_title') }}</strong><br>{{ trans('starmoozie::crud.reorder_success_message') }}"
             }).show();
-            location.reload();
           })
         .fail(function() {
             new Noty({

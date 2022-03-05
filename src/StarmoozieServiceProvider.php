@@ -102,7 +102,7 @@ class StarmoozieServiceProvider extends ServiceProvider
         $error_views = [__DIR__.'/resources/error_views' => resource_path('views/errors')];
         $starmoozie_views = [__DIR__.'/resources/views' => resource_path('views/vendor/starmoozie')];
         $starmoozie_public_assets = [__DIR__.'/public' => public_path()];
-        $starmoozie_lang_files = [__DIR__.'/resources/lang' => resource_path('lang/vendor/starmoozie')];
+        $starmoozie_lang_files = [__DIR__.'/resources/lang' => app()->langPath().'/vendor/starmoozie'];
         $starmoozie_config_files = [__DIR__.'/config' => config_path()];
 
         // sidebar content views, which are the only views most people need to overwrite
@@ -232,11 +232,29 @@ class StarmoozieServiceProvider extends ServiceProvider
         $this->loadViewsFrom(realpath(__DIR__.'/resources/views/crud'), 'crud');
     }
 
+    protected function mergeConfigFromOperationsDirectory()
+    {
+        $operationConfigs = scandir(__DIR__.'/config/starmoozie/operations/');
+        $operationConfigs = array_diff($operationConfigs, ['.', '..']);
+
+        if (! count($operationConfigs)) {
+            return;
+        }
+
+        foreach ($operationConfigs as $configFile) {
+            $this->mergeConfigFrom(
+                __DIR__.'/config/starmoozie/operations/'.$configFile,
+                'starmoozie.operations.'.substr($configFile, 0, strrpos($configFile, '.'))
+            );
+        }
+    }
+
     public function loadConfigs()
     {
         // use the vendor configuration file as fallback
         $this->mergeConfigFrom(__DIR__.'/config/starmoozie/crud.php', 'starmoozie.crud');
         $this->mergeConfigFrom(__DIR__.'/config/starmoozie/base.php', 'starmoozie.base');
+        $this->mergeConfigFromOperationsDirectory();
 
         // add the root disk to filesystem configuration
         app()->config['filesystems.disks.'.config('starmoozie.base.root_disk_name')] = [

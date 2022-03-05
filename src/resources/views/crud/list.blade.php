@@ -47,23 +47,41 @@
           @include('crud::inc.filters_navbar')
         @endif
 
-        <table id="crudTable" class="bg-white table table-striped table-hover nowrap rounded shadow-sm border-xs mt-2" cellspacing="0">
+        <table
+          id="crudTable"
+          class="bg-white table table-hover nowrap rounded shadow-sm border-xs mt-2"
+          data-has-details-row="{{ $crud->getOperationSetting('detailsRow') ?? 0 }}"
+          data-has-bulk-actions="{{ $crud->getOperationSetting('bulkActions') ?? 0 }}"
+          cellspacing="0">
             <thead>
               <tr>
+              <th 
+                data-orderable="false"
+                data-priority="1"
+                data-visible-in-table="false"
+                data-visible="true"
+                data-can-be-visible-in-table="true"
+                data-visible-in-modal="false"
+                data-visible-in-export="false">
+
+                {{-- Bulk checkbox --}}
+                @if($crud->getOperationSetting('bulkActions'))
+                  {!! View::make('crud::columns.inc.bulk_actions_checkbox')->render() !!}
+                @endif
+              </th>
+
                 {{-- Table columns --}}
                 @foreach ($crud->columns() as $column)
                   <th
                     data-orderable="{{ var_export($column['orderable'], true) }}"
                     data-priority="{{ $column['priority'] }}"
-                     {{--
-
-                        data-visible-in-table => if developer forced field in table with 'visibleInTable => true'
-                        data-visible => regular visibility of the field
-                        data-can-be-visible-in-table => prevents the column to be loaded into the table (export-only)
-                        data-visible-in-modal => if column apears on responsive modal
-                        data-visible-in-export => if this field is exportable
-                        data-force-export => force export even if field are hidden
-
+                    {{--
+                    data-visible-in-table => if developer forced field in table with 'visibleInTable => true'
+                    data-visible => regular visibility of the field
+                    data-can-be-visible-in-table => prevents the column to be loaded into the table (export-only)
+                    data-visible-in-modal => if column apears on responsive modal
+                    data-visible-in-export => if this field is exportable
+                    data-force-export => force export even if field are hidden
                     --}}
 
                     {{-- If it is an export field only, we are done. --}}
@@ -129,19 +147,12 @@
   <link rel="stylesheet" type="text/css" href="{{ asset('packages/datatables.net-fixedheader-bs4/css/fixedHeader.bootstrap4.min.css') }}">
   <link rel="stylesheet" type="text/css" href="{{ asset('packages/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css') }}">
 
-  <link rel="stylesheet" href="{{ asset('packages/starmoozie/crud/css/crud.css').'?v='.config('starmoozie.base.cachebusting_string') }}">
-  <link rel="stylesheet" href="{{ asset('packages/starmoozie/crud/css/form.css').'?v='.config('starmoozie.base.cachebusting_string') }}">
-  <link rel="stylesheet" href="{{ asset('packages/starmoozie/crud/css/list.css').'?v='.config('starmoozie.base.cachebusting_string') }}">
-
   <!-- CRUD LIST CONTENT - crud_list_styles stack -->
   @stack('crud_list_styles')
 @endsection
 
 @section('after_scripts')
   @include('crud::inc.datatables_logic')
-  <script src="{{ asset('packages/starmoozie/crud/js/crud.js').'?v='.config('starmoozie.base.cachebusting_string') }}"></script>
-  <script src="{{ asset('packages/starmoozie/crud/js/form.js').'?v='.config('starmoozie.base.cachebusting_string') }}"></script>
-  <script src="{{ asset('packages/starmoozie/crud/js/list.js').'?v='.config('starmoozie.base.cachebusting_string') }}"></script>
 
   <!-- CRUD LIST CONTENT - crud_list_scripts stack -->
   @stack('crud_list_scripts')

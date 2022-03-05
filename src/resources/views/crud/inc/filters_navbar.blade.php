@@ -10,7 +10,7 @@
         <ul class="nav navbar-nav">
           <!-- THE ACTUAL FILTERS -->
     			@foreach ($crud->filters() as $filter)
-    				@include($filter->getViewWithNamespace())
+    				@includeFirst($filter->getNamespacedViewWithFallbacks())
     			@endforeach
           <li class="nav-item"><a href="#" id="remove_filters_button" class="nav-link {{ count(Request::input()) != 0 ? '' : 'invisible' }}"><i class="la la-eraser"></i> {{ trans('starmoozie::crud.remove_filters') }}</a></li>
         </ul>
@@ -18,7 +18,7 @@
   </nav>
 
 @push('crud_list_scripts')
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/URI.js/1.18.2/URI.min.js" type="text/javascript"></script>
+	<script src="{{ asset('packages/URI.js/URI.min.js') }}" type="text/javascript"></script>
     <script>
       function addOrUpdateUriParameter(uri, parameter, value) {
             var new_url = normalizeAmpersand(uri);

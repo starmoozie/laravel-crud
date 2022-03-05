@@ -5,7 +5,7 @@
       {{starmoozie_user()->getAttribute('name') ? mb_substr(starmoozie_user()->name, 0, 1, 'UTF-8') : 'A'}}
     </span>
   </a>
-  <div class="dropdown-menu shadow {{ config('starmoozie.base.html_direction') == 'rtl' ? 'dropdown-menu-left' : 'dropdown-menu-right' }} mr-4 pb-1 pt-1">
+  <div class="dropdown-menu {{ config('starmoozie.base.html_direction') == 'rtl' ? 'dropdown-menu-left' : 'dropdown-menu-right' }} mr-4 pb-1 pt-1">
     <a class="dropdown-item" href="{{ route('starmoozie.account.info') }}"><i class="la la-user"></i> {{ trans('starmoozie::base.my_account') }}</a>
     <div class="dropdown-divider"></div>
     <a class="dropdown-item" href="{{ starmoozie_url('logout') }}"><i class="la la-lock"></i> {{ trans('starmoozie::base.logout') }}</a>

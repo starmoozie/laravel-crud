@@ -22,7 +22,7 @@ return [
 
     // Create form
     'add'                 => 'Add',
-    'back_to_all'         => 'Back to all ',
+    'back_to_all'         => 'Back ',
     'cancel'              => 'Cancel',
     'add_a_new'           => 'Add a new ',
 
@@ -161,8 +161,8 @@ return [
     'external_link'             => 'External link',
     'choose_file'               => 'Choose file',
     'new_item'                  => 'New Item',
-    'select_entry'              => 'Select :Attribute',
-    'select_entries'            => 'Select :Attribute',
+    'select_entry'              => 'Select an entry',
+    'select_entries'            => 'Select entries',
 
     //Table field
     'table_cant_add'    => 'Cannot add new :entity',

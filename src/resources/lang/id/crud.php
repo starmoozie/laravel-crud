@@ -22,7 +22,7 @@ return [
 
     // Create form
     'add'                 => 'Tambah',
-    'back_to_all'         => 'Kembali',
+    'back_to_all'         => 'Kembali ',
     'cancel'              => 'Batal',
     'add_a_new'           => 'Tambahkan yang baru ',
 
@@ -114,7 +114,7 @@ return [
     'update_success' => 'Item berhasil diubah.',
 
     // CRUD reorder view
-    'reorder'                      => 'Susun Ulang',
+    'reorder'                      => 'Susun ulang',
     'reorder_text'                 => 'Gunakan seret & lepas untuk menyusun ulang.',
     'reorder_success_title'        => 'Selesai',
     'reorder_success_message'      => 'Susunan Anda telah disimpan.',
@@ -143,8 +143,8 @@ return [
     'external_link'             => 'Tautan eksternal',
     'choose_file'               => 'Pilih File',
     'new_item'                  => 'Item baru',
-    'select_entry'              => 'Pilih :Attribute',
-    'select_entries'            => 'Pilih :Attribute',
+    'select_entry'              => 'Pilih masukan',
+    'select_entries'            => 'Pilih masukan',
 
     //Table field
     'table_cant_add'    => 'Tidak dapat menambahkan :entity yang baru',
