@@ -17,15 +17,15 @@ Route::group([
     'namespace'  => 'App\Http\Controllers\Admin',
 ], function () { // custom admin routes
 
-    if (\Illuminate\Support\Facades\Schema::hasTable('menu')) {
+    if (\Illuminate\Support\Facades\Schema::hasTable('menu') && class_exists(\Starmoozie\LaravelMenuPermission\app\Models\Menu::class)) {
         foreach (\Starmoozie\LaravelMenuPermission\app\Models\Menu::whereNotNull('controller')->get() as $route) {
             Route::crud($route->route, $route->controller);
         }
     }
 
-    if (\Illuminate\Support\Facades\Schema::hasTable('route')) {
-        foreach (\Starmoozie\LaravelMenuPermission\app\Models\Route::dashboardApi()->get() as $route) {
-            Route::crud($route->route, $route->controller);
+    if (\Illuminate\Support\Facades\Schema::hasTable('route') && class_exists(\Starmoozie\LaravelMenuPermission\app\Models\Route::class)) {
+        foreach (\Starmoozie\LaravelMenuPermission\app\Models\Route::dashboard()->get() as $route) {
+            Route::{$route->method}($route->route, $route->controller);
         }
     }
 }); // this should be the absolute last line of this file
