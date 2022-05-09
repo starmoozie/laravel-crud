@@ -2,11 +2,14 @@
 @php
     $connected_entity = new $field['model'];
     $connected_entity_key_name = $connected_entity->getKeyName();
-    $old_value = old(square_brackets_to_dots($field['name'])) ?? $field['value'] ?? $field['default'] ?? false;
+    $old_value = old_empty_or_null($field['name'], false) ??  $field['value'] ?? $field['default'] ?? false;
     // by default set ajax query delay to 500ms
     // this is the time we wait before send the query to the search endpoint, after the user as stopped typing.
     $field['delay'] = $field['delay'] ?? 500;
     $field['allows_null'] = $field['allows_null'] ?? $crud->model::isColumnNullable($field['name']);
+    $field['placeholder'] = $field['placeholder'] ?? trans('starmoozie::crud.select_entry');
+    $field['attribute'] = $field['attribute'] ?? $connected_entity->identifiableAttribute();
+    $field['minimum_input_length'] = $field['minimum_input_length'] ?? 2;
 @endphp
 
 @include('crud::fields.inc.wrapper_start')
@@ -18,8 +21,8 @@
         data-field-is-inline="{{var_export($inlineCreate ?? false)}}"
         data-column-nullable="{{ var_export($field['allows_null']) }}"
         data-dependencies="{{ isset($field['dependencies'])?json_encode(Arr::wrap($field['dependencies'])): json_encode([]) }}"
-        data-placeholder="{{ isset($field['placeholder']) ? $field['placeholder'] : __('starmoozie::crud.select_entry', ['attribute' => $field['name']]) }}"
-        data-minimum-input-length="{{ isset($field['minimum_input_length']) ? $field['minimum_input_length'] : 2 }}"
+        data-placeholder="{{ $field['placeholder'] }}"
+        data-minimum-input-length="{{ $field['minimum_input_length'] }}"
         data-data-source="{{ $field['data_source'] }}"
         data-method="{{ $field['method'] ?? 'GET' }}"
         data-field-attribute="{{ $field['attribute'] }}"
@@ -63,39 +66,36 @@
 {{-- ########################################## --}}
 {{-- Extra CSS and JS for this particular field --}}
 {{-- If a field type is shown multiple times on a form, the CSS and JS will only be loaded once --}}
-@if ($crud->fieldTypeNotLoaded($field))
-    @php
-        $crud->markFieldTypeAsLoaded($field);
-    @endphp
 
     {{-- FIELD CSS - will be loaded in the after_styles section --}}
-    @push('crud_fields_styles')
+@push('crud_fields_styles')
     <!-- include select2 css-->
-    <link href="{{ asset('packages/select2/dist/css/select2.min.css') }}" rel="stylesheet" type="text/css" />
-    <link href="{{ asset('packages/select2-bootstrap-theme/dist/select2-bootstrap.min.css') }}" rel="stylesheet" type="text/css" />
+    @loadOnce('packages/select2/dist/css/select2.min.css')
+    @loadOnce('packages/select2-bootstrap-theme/dist/select2-bootstrap.min.css')
     {{-- allow clear --}}
-    @if ($field['allows_null'])
-    <style type="text/css">
-        .select2-selection__clear::after {
-            content: ' {{ trans('starmoozie::crud.clear') }}';
-        }
-    </style>
+    @if($field['allows_null'])
+        @loadOnce('select2_from_ajax_custom_css')
+        <style type="text/css">
+            .select2-selection__clear::after {
+                content: ' {{ trans('starmoozie::crud.clear') }}';
+            }
+        </style>
+        @endLoadOnce
     @endif
-    @endpush
+@endpush
 
     {{-- FIELD JS - will be loaded in the after_scripts section --}}
-    @push('crud_fields_scripts')
+@push('crud_fields_scripts')
     <!-- include select2 js-->
-    <script src="{{ asset('packages/select2/dist/js/select2.full.min.js') }}"></script>
+    @loadOnce('packages/select2/dist/js/select2.full.min.js')
     @if (app()->getLocale() !== 'en')
-    <script src="{{ asset('packages/select2/dist/js/i18n/' . str_replace('_', '-', app()->getLocale()) . '.js') }}"></script>
+        @loadOnce('packages/select2/dist/js/i18n/' . str_replace('_', '-', app()->getLocale()) . '.js')
     @endif
-    @endpush
-
-@endif
+@endpush
 
 <!-- include field specific select2 js-->
 @push('crud_fields_scripts')
+@loadOnce('bpFieldInitSelect2FromAjaxElement')
 <script>
     function bpFieldInitSelect2FromAjaxElement(element) {
         var form = element.closest('form');
@@ -109,27 +109,7 @@
         var $allowClear = element.attr('data-column-nullable') == 'true' ? true : false;
         var $dependencies = JSON.parse(element.attr('data-dependencies'));
         var $ajaxDelay = element.attr('data-ajax-delay');
-        var $selectedOptions = typeof element.attr('data-selected-options') === 'string' ? JSON.parse(element.attr('data-selected-options')) : JSON.parse(null);
         var $isFieldInline = element.data('field-is-inline');
-
-        var select2AjaxFetchSelectedEntry = function (element) {
-            return new Promise(function (resolve, reject) {
-                $.ajax({
-                    url: $dataSource,
-                    data: {
-                        'keys': $selectedOptions
-                    },
-                    type: $method,
-                    success: function (result) {
-
-                        resolve(result);
-                    },
-                    error: function (result) {
-                        reject(result);
-                    }
-                });
-            });
-        };
 
         // do not initialise select2s that have already been initialised
         if ($(element).hasClass("select2-hidden-accessible"))
@@ -185,31 +165,6 @@
             },
         });
 
-        // if we have selected options here we are on a repeatable field, we need to fetch the options with the keys
-        // we have stored from the field and append those options in the select.
-        if (typeof $selectedOptions !== typeof undefined &&
-            $selectedOptions !== false &&
-            $selectedOptions != '' &&
-            $selectedOptions != null &&
-            $selectedOptions != [])
-        {
-            var optionsForSelect = [];
-            select2AjaxFetchSelectedEntry(element).then(function(result) {
-                result.forEach(function(item) {
-                    $itemText = item[$fieldAttribute];
-                    $itemValue = item[$connectedEntityKeyName];
-                    //add current key to be selected later.
-                    optionsForSelect.push($itemValue);
-
-                    //create the option in the select
-                    $(element).append('<option value="'+$itemValue+'">'+$itemText+'</option>');
-                });
-
-                // set the option keys as selected.
-                $(element).val(optionsForSelect);
-            });
-        }
-
         // if any dependencies have been declared
         // when one of those dependencies changes value
         // reset the select2 value
@@ -238,7 +193,8 @@
             }
         }
     }
-</script>
+    </script>
+    @endLoadOnce
 @endpush
 {{-- End of Extra CSS and JS --}}
 {{-- ########################################## --}}

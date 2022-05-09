@@ -132,6 +132,21 @@ class CrudFilter
         return $this->viewNamespace.'.'.$this->view;
     }
 
+    /**
+     * Get an array of full paths to the filter view, including fallbacks
+     * as configured in the starmoozie/config/crud.php file.
+     *
+     * @return array
+     */
+    public function getNamespacedViewWithFallbacks()
+    {
+        $type = $this->type;
+
+        return array_map(function ($item) use ($type) {
+            return $item.'.'.$type;
+        }, config('starmoozie.crud.view_namespaces.filters'));
+    }
+
     // ---------------------
     // FLUENT SYNTAX METHODS
     // ---------------------
@@ -180,9 +195,12 @@ class CrudFilter
 
     /**
      * Remove an attribute from one field's definition array.
+     * (ununsed function).
      *
      * @param  string  $field  The name of the field.
      * @param  string  $attribute  The name of the attribute being removed.
+     *
+     * @deprecated
      */
     public function removeFilterAttribute($filter, $attribute)
     {

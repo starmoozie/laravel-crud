@@ -1,15 +1,10 @@
 @if (!empty($widgets))
 	@foreach ($widgets as $currentWidget)
-		@php
-			if (!is_array($currentWidget)) {
-				$currentWidget = $currentWidget->toArray();
-			}
-		@endphp
 
-		@if (isset($currentWidget['viewNamespace']))
-			@include($currentWidget['viewNamespace'].'.'.$currentWidget['type'], ['widget' => $currentWidget])
+		@if (is_array($currentWidget))
+			@include($currentWidget['viewNamespace'] ?? config('starmoozie.base.component_view_namespaces.widgets')[0] .'.'. $currentWidget['type'], ['widget' => $currentWidget])
 		@else
-			@include(starmoozie_view('widgets.'.$currentWidget['type']), ['widget' => $currentWidget])
+			@include($currentWidget->getFinalViewPath(), ['widget' => $currentWidget->toArray()])
 		@endif
 
 	@endforeach

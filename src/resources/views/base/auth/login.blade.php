@@ -13,7 +13,7 @@
                             <label class="control-label" for="{{ $username }}">{{ config('starmoozie.base.authentication_column_name') }}</label>
 
                             <div>
-                                <input type="text" class="form-control{{ $errors->has($username) ? ' is-invalid' : '' }}" name="{{ $username }}" value="{{ old($username) }}" id="{{ $username }}" autofocus>
+                                <input type="text" class="form-control{{ $errors->has($username) ? ' is-invalid' : '' }}" name="{{ $username }}" value="{{ old($username) }}" id="{{ $username }}">
 
                                 @if ($errors->has($username))
                                     <span class="invalid-feedback">
@@ -49,7 +49,7 @@
 
                         <div class="form-group">
                             <div>
-                                <button type="submit" class="btn btn-block btn-sm btn-primary">
+                                <button type="submit" class="btn btn-block btn-primary">
                                     {{ trans('starmoozie::base.login') }}
                                 </button>
                             </div>

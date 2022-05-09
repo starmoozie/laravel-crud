@@ -160,6 +160,9 @@
                 },
             }
         },
+        columnDefs: [
+            { responsivePriority: 1, targets: 1 },
+        ],
         fixedHeader: true,
         @else
         responsive: false,
@@ -218,7 +221,7 @@
               "thousands":      "{{ trans('starmoozie::crud.thousands') }}",
               "lengthMenu":     "{{ trans('starmoozie::crud.lengthMenu') }}",
               "loadingRecords": "{{ trans('starmoozie::crud.loadingRecords') }}",
-              "processing":     "<img src='{{ asset('packages/starmoozie/crud/img/ajax-loader.gif') }}' alt='{{ trans('starmoozie::crud.processing') }}'>",
+              "processing":     "<img src='{{ asset('packages/starmoozie/base/img/spinner.svg') }}' alt='{{ trans('starmoozie::crud.processing') }}'>",
               "search": "_INPUT_",
               "searchPlaceholder": "{{ trans('starmoozie::crud.search') }}...",
               "zeroRecords":    "{{ trans('starmoozie::crud.zeroRecords') }}",

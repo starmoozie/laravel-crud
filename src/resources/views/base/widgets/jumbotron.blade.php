@@ -6,7 +6,7 @@
 @endphp
 
 @includeWhen(!empty($widget['wrapper']), 'starmoozie::widgets.inc.wrapper_start')
-	<div class="jumbotron mb-2 shadow bg-white">
+	<div class="jumbotron mb-2">
 
 	  @if (isset($widget['heading']))
 	  <h1 class="display-3">{!! $widget['heading'] !!}</h1>
@@ -18,7 +18,7 @@
 
 	  @if (isset($widget['button_link']))
 	  <p class="lead">
-	    <a class="btn btn-sm btn-primary shadow" href="{{ $widget['button_link'] }}" role="button">{{ $widget['button_text'] }}</a>
+	    <a class="btn btn-primary" href="{{ $widget['button_link'] }}" role="button">{{ $widget['button_text'] }}</a>
 	  </p>
 	  @endif
 	</div>

@@ -287,9 +287,7 @@ trait Columns
      */
     public function findColumnById($column_number)
     {
-        $result = array_slice($this->columns(), $column_number, 1);
-
-        return reset($result);
+        return array_values($this->columns())[$column_number - 1];
     }
 
     /**
@@ -360,10 +358,10 @@ trait Columns
     public function makeSureColumnHasNeededAttributes($column)
     {
         $column = $this->makeSureColumnHasName($column);
+        $column = $this->makeSureColumnHasKey($column);
         $column = $this->makeSureColumnHasLabel($column);
         $column = $this->makeSureColumnHasEntity($column);
         $column = $this->makeSureColumnHasType($column);
-        $column = $this->makeSureColumnHasKey($column);
         $column = $this->makeSureColumnHasPriority($column);
         $column = $this->makeSureColumnHasModel($column);
 

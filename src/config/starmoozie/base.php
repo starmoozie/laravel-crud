@@ -24,7 +24,7 @@ return [
     // ----
 
     // Project name. Shown in the window title.
-    'project_name' => ENV('APP_NAME') . ' Admin Panel',
+    'project_name' => 'Starmoozie Admin Panel',
 
     // When clicking on the admin panel's top-left logo/name,
     // where should the user be redirected?
@@ -44,7 +44,7 @@ return [
     'styles' => [
         'packages/starmoozie/base/css/bundle.css', // has primary color electric purple (starmoozie default)
         // 'packages/starmoozie/base/css/blue-bundle.css', // has primary color blue
-        'css/custom.css',
+        // 'css/custom.css',
 
         // Here's what's inside the bundle:
         // 'packages/@digitallyhappy/backstrap/css/style.min.css',
@@ -80,7 +80,8 @@ return [
     'breadcrumbs' => true,
 
     // Horizontal navbar classes. Helps make the admin panel look similar to your project's design.
-    'header_class' => 'app-header bg-primary border-0 header-fixed navbar-color navbar shadow-sm',
+    'header_class' => 'app-header bg-white border-bottom navbar shadow-sm',
+    // 'header_class' => 'app-header bg-primary border-0 header-fixed navbar-color navbar shadow-sm',
     // For background colors use: bg-dark, bg-primary, bg-secondary, bg-danger, bg-warning, bg-success, bg-info, bg-blue, bg-light-blue, bg-indigo, bg-purple, bg-pink, bg-red, bg-orange, bg-yellow, bg-green, bg-teal, bg-cyan, bg-white
     // For links to be visible on different background colors use: "navbar-dark", "navbar-light", "navbar-color"
 
@@ -93,7 +94,7 @@ return [
     // Try sidebar-hidden, sidebar-fixed, sidebar-compact, sidebar-lg-show
 
     // Sidebar element classes.
-    'sidebar_class' => 'sidebar sidebar-pills bg-dark shadow d-print-none',
+    'sidebar_class' => 'sidebar sidebar-pills bg-white border-right shadow-sm',
     // Remove "sidebar-transparent" for standard sidebar look
     // Try "sidebar-light" or "sidebar-dark" for dark/light links
     // You can also add a background class like bg-dark, bg-primary, bg-secondary, bg-danger, bg-warning, bg-success, bg-info, bg-blue, bg-light-blue, bg-indigo, bg-purple, bg-pink, bg-red, bg-orange, bg-yellow, bg-green, bg-teal, bg-cyan
@@ -166,7 +167,7 @@ return [
     | By default the registration is open only on localhost.
     */
 
-    'registration_open' => env('STARMOOZIE_REGISTRATION_OPEN', env('APP_ENV') === 'local'),
+    'registration_open' => env('REGISTRATION_OPEN', env('APP_ENV') === 'local'),
 
     /*
     |--------------------------------------------------------------------------
@@ -203,12 +204,6 @@ return [
     // Set this to false if you would like to skip adding "my account" routes
     // (you then need to manually define the routes in your web.php)
     'setup_my_account_routes' => true,
-
-    'setup_permission_url' => true,
-    'setup_menu_url' => true,
-    'setup_role_url' => true,
-    'setup_user_url' => false,
-    'setup_route_url' => true,
 
     // Set this to false if you would like to skip adding the password recovery routes
     // (you then need to manually define the routes in your web.php)
@@ -297,6 +292,13 @@ return [
     // your namespace would be the one below. IMPORTANT: in this case the namespace ends with a dot.
     // 'view_namespace' => 'vendor.myname.mypackage.',
 
+    // Tell Starmoozie to look in more places for component views (like widgets)
+    'component_view_namespaces' => [
+        'widgets' => [
+            'starmoozie::widgets', // falls back to 'resources/views/vendor/starmoozie/base/widgets'
+        ],
+    ],
+
     /*
     |--------------------------------------------------------------------------
     | File System
@@ -310,19 +312,9 @@ return [
     // You can rename this disk here. Default: root
     'root_disk_name' => 'root',
 
-    /*
-    |--------------------------------------------------------------------------
-    | License Code
-    |--------------------------------------------------------------------------
-    |
-    | If you, your employer or your client make money by using Starmoozie, you need
-    | to purchase a license. A license code will be provided after purchase,
-    | which you can put here or in your ENV file in staging & production.
-    |
-    | More info and payment form on:
-    | https://www.starmoozieforlaravel.com
-    |
-    */
-
-    'license_code' => env('STARMOOZIE_LICENSE', false),
+    'setup_permission_url' => true,
+    'setup_menu_url' => true,
+    'setup_role_url' => true,
+    'setup_user_url' => true,
+    'setup_route_url' => true,
 ];

@@ -25,19 +25,19 @@
 
        @yield('header')
 
-        <div class="container-fluid animated fadeIn" style="min-height: 75vh;">
+      <div class="container-fluid animated fadeIn" style="min-height: 75vh;">
 
-          @yield('before_content_widgets')
+        @yield('before_content_widgets')
 
-          @yield('content')
-          
-          @yield('after_content_widgets')
+        @yield('content')
+        
+        @yield('after_content_widgets')
 
-        </div>
+      </div>
 
-        <footer class="{{ config('starmoozie.base.footer_class') }}">
-          @include(starmoozie_view('inc.footer'))
-        </footer>
+      <footer class="{{ config('starmoozie.base.footer_class') }}">
+        @include(starmoozie_view('inc.footer'))
+      </footer>
 
     </main>
 

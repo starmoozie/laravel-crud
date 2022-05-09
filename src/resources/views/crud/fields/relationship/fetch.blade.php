@@ -2,7 +2,7 @@
 
     //in case entity is superNews we want the url friendly super-news
     $entityWithoutAttribute = $crud->getOnlyRelationEntity($field);
-    $routeEntity = Str::kebab($entityWithoutAttribute);
+    $routeEntity = Str::kebab(str_replace('_', '-', $entityWithoutAttribute));
 
     $connected_entity = new $field['model'];
     $connected_entity_key_name = $connected_entity->getKeyName();
@@ -10,6 +10,9 @@
     // we need to re-ensure field type here because relationship is a `switchboard` and not actually
     // a crud field like this one.
     $field['type'] = 'fetch';
+
+    // this field can be used as a pivot selector for n-n relationships
+    $field['is_pivot_select'] = $field['is_pivot_select'] ?? false;
 
     $field['multiple'] = $field['multiple'] ?? $crud->guessIfFieldHasMultipleFromRelationType($field['relation_type']);
     $field['data_source'] = $field['data_source'] ?? url($crud->route.'/fetch/'.$routeEntity);
@@ -25,7 +28,7 @@
 
     // make sure the $field['value'] takes the proper value
     // and format it to JSON, so that select2 can parse it
-    $current_value = old(square_brackets_to_dots($field['name'])) ?? $field['value'] ?? $field['default'] ?? '';
+    $current_value = old_empty_or_null($field['name'], []) ??  $field['value'] ?? $field['default'] ?? [];
     if (!empty($current_value) || is_int($current_value)) {
         switch (gettype($current_value)) {
             case 'array':
@@ -55,17 +58,17 @@
                 break;
         }
     }
-    $field['value'] = json_encode($current_value);
 @endphp
 
 @include('crud::fields.inc.wrapper_start')
     <label>{!! $field['label'] !!}</label>
-
+    {{-- To make sure a value gets submitted even if the "select multiple" is empty, we need a hidden input --}}
+    @if($field['multiple'])<input type="hidden" name="{{ $field['name'] }}" value="" @if(in_array('disabled', $field['attributes'] ?? [])) disabled @endif />@endif
     <select
         style="width:100%"
         name="{{ $field['name'].($field['multiple']?'[]':'') }}"
         data-init-function="bpFieldInitFetchElement"
-        data-field-is-inline="{{var_export($inlineCreate ?? false)}}"
+        data-field-is-inline="{{ var_export($inlineCreate ?? false) }}"
         data-column-nullable="{{ var_export($field['allows_null']) }}"
         data-dependencies="{{ isset($field['dependencies'])?json_encode(Arr::wrap($field['dependencies'])): json_encode([]) }}"
         data-model-local-key="{{$crud->model->getKeyName()}}"
@@ -76,10 +79,10 @@
         data-field-attribute="{{ $field['attribute'] }}"
         data-connected-entity-key-name="{{ $connected_entity_key_name }}"
         data-include-all-form-fields="{{ var_export($field['include_all_form_fields']) }}"
-        data-current-value="{{ $field['value'] }}"
         data-app-current-lang="{{ app()->getLocale() }}"
         data-ajax-delay="{{ $field['delay'] }}"
         data-language="{{ str_replace('_', '-', app()->getLocale()) }}"
+        data-is-pivot-select="{{ var_export($field['is_pivot_select']) }}"
 
         @include('crud::fields.inc.attributes', ['default_class' =>  'form-control'])
 
@@ -87,6 +90,18 @@
         multiple
         @endif
         >
+
+        @if ($field['allows_null'] && !$field['multiple'])
+            <option value="">-</option>
+        @endif
+
+        @if (!empty($current_value))
+            @foreach ($current_value as $key => $item)
+                <option value="{{ $key }}" selected>
+                    {{ $item }}
+                </option>
+            @endforeach
+        @endif
     </select>
 
     {{-- HINT --}}
@@ -127,49 +142,6 @@
 <script>
     // if nullable, make sure the Clear button uses the translated string
     document.styleSheets[0].addRule('.select2-selection__clear::after','content:  "{{ trans('starmoozie::crud.clear') }}";');
-
-    // if this function is not already on page, for example in fetch_create we add it.
-    // this function is responsible for query the ajax endpoint and fetch a default entry
-    // in case the field does not allow null
-    if (!window.fetchDefaultEntry) {
-        var fetchDefaultEntry = function (element) {
-            var $fetchUrl = element.attr('data-data-source');
-            var $relatedAttribute = element.attr('data-field-attribute');
-            var $relatedKeyName = element.attr('data-connected-entity-key-name');
-            var $return = {};
-
-            return new Promise(function (resolve, reject) {
-                $.ajax({
-                    url: $fetchUrl,
-                    data: {
-                        'q': ''
-                    },
-                    type: 'POST',
-                    success: function (result) {
-                        // if data is available here it means a paginated collection has been returned.
-                // we want only the first to be default.
-                if (typeof result.data !== "undefined"){
-                    $key = result.data[0][$relatedKeyName];
-                    $value = processItemText(result.data[0], $relatedAttribute);
-                }else{
-                    $key = result[0][$relatedKeyName];
-                    $value = processItemText(result[0], $relatedAttribute);
-                }
-
-                $return[$relatedKeyName] = $key;
-                $return[$relatedAttribute] = $value;
-
-                $(element).attr('data-current-value', JSON.stringify($return));
-                resolve($return);
-                    },
-                    error: function (result) {
-                        reject(result);
-                    }
-                });
-            });
-        };
-    }
-
     /**
      * Initialize Select2 on an element that wants the "Fetch" functionality.
      * This method gets called automatically by Starmoozie:
@@ -191,93 +163,10 @@
         var $includeAllFormFields = element.attr('data-include-all-form-fields') == 'false' ? false : true;
         var $dependencies = JSON.parse(element.attr('data-dependencies'));
         var $allows_null = element.attr('data-column-nullable') == 'true' ? true : false;
-        var $selectedOptions = typeof element.attr('data-selected-options') === 'string' ? JSON.parse(element.attr('data-selected-options')) : JSON.parse(null);
         var $multiple = element.prop('multiple');
         var $ajaxDelay = element.attr('data-ajax-delay');
         var $isFieldInline = element.data('field-is-inline');
-
-        var FetchAjaxFetchSelectedEntry = function (element) {
-            return new Promise(function (resolve, reject) {
-                $.ajax({
-                    url: $dataSource,
-                    data: {
-                        'keys': $selectedOptions
-                    },
-                    type: $method,
-                    success: function (result) {
-
-                        resolve(result);
-                    },
-                    error: function (result) {
-                        reject(result);
-                    }
-                });
-            });
-        };
-
-        if($allows_null && !$multiple) {
-            $(element).append('<option value="">'+$placeholder+'</option>');
-        }
-
-
-        if (typeof $selectedOptions !== typeof undefined &&
-            $selectedOptions !== false &&
-            $selectedOptions != '' &&
-            $selectedOptions != null &&
-            $selectedOptions != [])
-        {
-            var optionsForSelect = [];
-            FetchAjaxFetchSelectedEntry(element).then(function(result) {
-                result.forEach(function(item) {
-                    $itemText = processItemText(item, $fieldAttribute);
-                    $itemValue = item[$connectedEntityKeyName];
-                    //add current key to be selected later.
-                    optionsForSelect.push($itemValue);
-
-                    //create the option in the select
-                    $(element).append('<option value="'+$itemValue+'">'+$itemText+'</option>');
-                });
-
-                // set the option keys as selected.
-                $(element).val(optionsForSelect);
-                $(element).trigger('change');
-            });
-        }
-
-        var $item = false;
-
-        var $value = JSON.parse(element.attr('data-current-value'))
-
-        if(Object.keys($value).length > 0) {
-            $item = true;
-        }
-
-        var $currentValue = $item ? $value : '';
-
-        //we reselect the previously selected options if any.
-        var selectedOptions = [];
-
-        var $currentValue = $item ? $value : {};
-
-        //we reselect the previously selected options if any.
-        Object.entries($currentValue).forEach(function(option) {
-            selectedOptions.push(option[0]);
-            var $option = new Option(option[1], option[0]);
-            $(element).append($option);
-        });
-
-        $(element).val(selectedOptions);
-
-
-        if (!$allows_null && $item === false && $selectedOptions == null) {
-            fetchDefaultEntry(element).then(function(result) {
-                var $item = JSON.parse(element.attr('data-current-value'));
-                $(element).append('<option value="'+$item[$modelKey]+'">'+$item[$fieldAttribute]+'</option>');
-                $(element).val($item[$modelKey]);
-                $(element).trigger('change');
-            });
-        }
-
+        var $isPivotSelect = element.data('is-pivot-select');
 
         var $select2Settings = {
                 theme: 'bootstrap',
@@ -307,30 +196,56 @@
                     },
                     processResults: function (data, params) {
                         params.page = params.page || 1;
+
+                        // if field is a pivot select, we are gonna get other pivot values,so we can disable them from selection.
+                        if ($isPivotSelect) {
+                            let pivots_container = $(element).closest('div[data-repeatable-holder='+$(element).data('repeatable-input-name')+']');
+                            var selected_values = [];
+
+                            $(pivots_container).children().each(function(i,container) {
+                                $(container).find('select').each(function(i, el) {
+                                    if(typeof $(el).attr('data-is-pivot-select') !== 'undefined' && $(el).attr('data-is-pivot-select') && $(el).val()) {
+                                        selected_values.push($(el).val());
+                                    }
+                                });
+                            });
+                        }
+
                         //if we have data.data here it means we returned a paginated instance from controller.
                         //otherwise we returned one or more entries unpaginated.
-                        if(data.data) {
+                        if (data.data) {
                         var result = {
                             results: $.map(data.data, function (item) {
                                 var $itemText = processItemText(item, $fieldAttribute);
+                                let disabled = false;
+
+                                if (selected_values && selected_values.some(e => e == item[$connectedEntityKeyName])) {
+                                    disabled = true;
+                                }
 
                                 return {
                                     text: $itemText,
-                                    id: item[$connectedEntityKeyName]
+                                    id: item[$connectedEntityKeyName],
+                                    disabled: disabled
                                 }
                             }),
                            pagination: {
                                  more: data.current_page < data.last_page
                            }
                         };
-                        }else {
+                        } else {
                             var result = {
                                 results: $.map(data, function (item) {
                                     var $itemText = processItemText(item, $fieldAttribute);
+                                    let disabled = false;
+                                    if(selected_values.some(e => e == item[$connectedEntityKeyName])) {
+                                        disabled = true;
+                                    }
 
                                     return {
                                         text: $itemText,
-                                        id: item[$connectedEntityKeyName]
+                                        id: item[$connectedEntityKeyName],
+                                        disabled: disabled
                                     }
                                 }),
                                 pagination: {
@@ -354,12 +269,12 @@
             for (var i=0; i < $dependencies.length; i++) {
                 var $dependency = $dependencies[i];
                 //if element does not have a custom-selector attribute we use the name attribute
-                if(typeof element.attr('data-custom-selector') == 'undefined') {
+                if (typeof element.attr('data-custom-selector') == 'undefined') {
                     form.find('[name="'+$dependency+'"], [name="'+$dependency+'[]"]').change(function(el) {
                             $(element.find('option:not([value=""])')).remove();
                             element.val(null).trigger("change");
                     });
-                }else{
+                } else {
                     // we get the row number and custom selector from where element is called
                     let rowNumber = element.attr('data-row-number');
                     let selector = element.attr('data-custom-selector');
