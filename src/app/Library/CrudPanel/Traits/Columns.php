@@ -287,9 +287,7 @@ trait Columns
      */
     public function findColumnById($column_number)
     {
-        $result = array_slice($this->columns(), (int) $column_number - 1, 1);
-
-        return reset($result);
+        return array_values($this->columns())[$column_number - 1];
     }
 
     /**
