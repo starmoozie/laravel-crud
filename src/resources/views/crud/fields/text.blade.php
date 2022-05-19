@@ -20,3 +20,16 @@
         <p class="help-block">{!! $field['hint'] !!}</p>
     @endif
 @include('crud::fields.inc.wrapper_end')
+
+@if(isset($field['masking']) && isset($field['masking']['format']))
+    @push('crud_fields_scripts')
+        @loadOnce('packages/masking/jquery.mask.js')
+        <script>
+            $(document).ready(function() {
+                var id = "{{ $field['name'] }}";
+                var format = "{{ $field['masking']['format'] }}"
+                $(`[name=${id}]`).mask(format, {reverse: true});
+            })
+        </script>
+    @endpush
+@endif
