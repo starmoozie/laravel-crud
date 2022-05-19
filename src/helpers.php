@@ -304,3 +304,15 @@ if (!function_exists('capitalize')) {
         return ucwords(strtolower($string));
     }
 }
+
+if (!function_exists('transReplace')) {
+    function transReplace($string)
+    {
+        $value = strtolower($string);
+        return str_replace(
+            [' ', '_'],
+            ['', ''],
+            $value
+        );
+    }
+}
