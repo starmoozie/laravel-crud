@@ -2,6 +2,7 @@
 
 namespace Starmoozie\CRUD;
 
+use Starmoozie\CRUD\app\Http\Middleware\EnsureEmailVerification;
 use Starmoozie\CRUD\app\Http\Middleware\ThrottlePasswordRecovery;
 use Starmoozie\CRUD\app\Library\CrudPanel\CrudPanel;
 use Illuminate\Routing\Router;
@@ -37,7 +38,7 @@ class StarmoozieServiceProvider extends ServiceProvider
     public function boot(\Illuminate\Routing\Router $router)
     {
         $this->loadViewsWithFallbacks();
-        $this->loadTranslationsFrom(realpath(__DIR__.'/resources/lang'), 'starmoozie');
+        $this->loadTranslationsFrom(realpath(__DIR__ . '/resources/lang'), 'starmoozie');
         $this->loadConfigs();
         $this->registerMiddlewareGroup($this->app->router);
         $this->setupRoutes($this->app->router);
@@ -64,7 +65,7 @@ class StarmoozieServiceProvider extends ServiceProvider
 
         // load a macro for Route,
         // helps developers load all routes for a CRUD resource in one line
-        if (! Route::hasMacro('crud')) {
+        if (!Route::hasMacro('crud')) {
             $this->addRouteMacro();
         }
 
@@ -80,7 +81,7 @@ class StarmoozieServiceProvider extends ServiceProvider
         $middleware_key = config('starmoozie.base.middleware_key');
         $middleware_class = config('starmoozie.base.middleware_class');
 
-        if (! is_array($middleware_class)) {
+        if (!is_array($middleware_class)) {
             $router->pushMiddlewareToGroup($middleware_key, $middleware_class);
 
             return;
@@ -95,27 +96,32 @@ class StarmoozieServiceProvider extends ServiceProvider
         if (config('starmoozie.base.setup_password_recovery_routes')) {
             $router->aliasMiddleware('starmoozie.throttle.password.recovery', ThrottlePasswordRecovery::class);
         }
+
+        // register the email verification middleware, if the developer enabled it in the config.
+        if (config('starmoozie.base.setup_email_verification_routes', false) && config('starmoozie.base.add_verified_to_starmoozie_middleware', true)) {
+            $router->pushMiddlewareToGroup($middleware_key, EnsureEmailVerification::class);
+        }
     }
 
     public function publishFiles()
     {
-        $error_views = [__DIR__.'/resources/error_views' => resource_path('views/errors')];
-        $starmoozie_views = [__DIR__.'/resources/views' => resource_path('views/vendor/starmoozie')];
-        $starmoozie_public_assets = [__DIR__.'/public' => public_path()];
-        $starmoozie_lang_files = [__DIR__.'/resources/lang' => app()->langPath().'/vendor/starmoozie'];
-        $starmoozie_config_files = [__DIR__.'/config' => config_path()];
+        $error_views = [__DIR__ . '/resources/error_views' => resource_path('views/errors')];
+        $starmoozie_views = [__DIR__ . '/resources/views' => resource_path('views/vendor/starmoozie')];
+        $starmoozie_public_assets = [__DIR__ . '/public' => public_path()];
+        $starmoozie_lang_files = [__DIR__ . '/resources/lang' => app()->langPath() . '/vendor/starmoozie'];
+        $starmoozie_config_files = [__DIR__ . '/config' => config_path()];
 
         // sidebar content views, which are the only views most people need to overwrite
         $starmoozie_menu_contents_view = [
-            __DIR__.'/resources/views/base/inc/sidebar_content.blade.php'      => resource_path('views/vendor/starmoozie/base/inc/sidebar_content.blade.php'),
-            __DIR__.'/resources/views/base/inc/topbar_left_content.blade.php'  => resource_path('views/vendor/starmoozie/base/inc/topbar_left_content.blade.php'),
-            __DIR__.'/resources/views/base/inc/topbar_right_content.blade.php' => resource_path('views/vendor/starmoozie/base/inc/topbar_right_content.blade.php'),
+            __DIR__ . '/resources/views/base/inc/sidebar_content.blade.php'      => resource_path('views/vendor/starmoozie/base/inc/sidebar_content.blade.php'),
+            __DIR__ . '/resources/views/base/inc/topbar_left_content.blade.php'  => resource_path('views/vendor/starmoozie/base/inc/topbar_left_content.blade.php'),
+            __DIR__ . '/resources/views/base/inc/topbar_right_content.blade.php' => resource_path('views/vendor/starmoozie/base/inc/topbar_right_content.blade.php'),
         ];
-        $starmoozie_custom_routes_file = [__DIR__.$this->customRoutesFilePath => base_path($this->customRoutesFilePath)];
+        $starmoozie_custom_routes_file = [__DIR__ . $this->customRoutesFilePath => base_path($this->customRoutesFilePath)];
 
         // calculate the path from current directory to get the vendor path
         $vendorPath = dirname(__DIR__, 3);
-        $gravatar_assets = [$vendorPath.'/creativeorange/gravatar/config' => config_path()];
+        $gravatar_assets = [$vendorPath . '/creativeorange/gravatar/config' => config_path()];
 
         // establish the minimum amount of files that need to be published, for Starmoozie to work; there are the files that will be published by the install command
         $minimum = array_merge(
@@ -150,11 +156,11 @@ class StarmoozieServiceProvider extends ServiceProvider
     public function setupRoutes(Router $router)
     {
         // by default, use the routes file provided in vendor
-        $routeFilePathInUse = __DIR__.$this->routeFilePath;
+        $routeFilePathInUse = __DIR__ . $this->routeFilePath;
 
         // but if there's a file with the same name in routes/starmoozie, use that one
-        if (file_exists(base_path().$this->routeFilePath)) {
-            $routeFilePathInUse = base_path().$this->routeFilePath;
+        if (file_exists(base_path() . $this->routeFilePath)) {
+            $routeFilePathInUse = base_path() . $this->routeFilePath;
         }
 
         $this->loadRoutesFrom($routeFilePathInUse);
@@ -169,8 +175,8 @@ class StarmoozieServiceProvider extends ServiceProvider
     public function setupCustomRoutes(Router $router)
     {
         // if the custom routes file is published, register its routes
-        if (file_exists(base_path().$this->customRoutesFilePath)) {
-            $this->loadRoutesFrom(base_path().$this->customRoutesFilePath);
+        if (file_exists(base_path() . $this->customRoutesFilePath)) {
+            $this->loadRoutesFrom(base_path() . $this->customRoutesFilePath);
         }
     }
 
@@ -204,11 +210,11 @@ class StarmoozieServiceProvider extends ServiceProvider
             // get an instance of the controller
             if ($this->hasGroupStack()) {
                 $groupStack = $this->getGroupStack();
-                $groupNamespace = $groupStack && isset(end($groupStack)['namespace']) ? end($groupStack)['namespace'].'\\' : '';
+                $groupNamespace = $groupStack && isset(end($groupStack)['namespace']) ? end($groupStack)['namespace'] . '\\' : '';
             } else {
                 $groupNamespace = '';
             }
-            $namespacedController = $groupNamespace.$controller;
+            $namespacedController = $groupNamespace . $controller;
             $controllerInstance = App::make($namespacedController);
 
             return $controllerInstance->setupRoutes($name, $routeName, $controller);
@@ -228,23 +234,23 @@ class StarmoozieServiceProvider extends ServiceProvider
             $this->loadViewsFrom($customCrudFolder, 'crud');
         }
         // - then the stock views that come with the package, in case a published view might be missing
-        $this->loadViewsFrom(realpath(__DIR__.'/resources/views/base'), 'starmoozie');
-        $this->loadViewsFrom(realpath(__DIR__.'/resources/views/crud'), 'crud');
+        $this->loadViewsFrom(realpath(__DIR__ . '/resources/views/base'), 'starmoozie');
+        $this->loadViewsFrom(realpath(__DIR__ . '/resources/views/crud'), 'crud');
     }
 
     protected function mergeConfigFromOperationsDirectory()
     {
-        $operationConfigs = scandir(__DIR__.'/config/starmoozie/operations/');
+        $operationConfigs = scandir(__DIR__ . '/config/starmoozie/operations/');
         $operationConfigs = array_diff($operationConfigs, ['.', '..']);
 
-        if (! count($operationConfigs)) {
+        if (!count($operationConfigs)) {
             return;
         }
 
         foreach ($operationConfigs as $configFile) {
             $this->mergeConfigFrom(
-                __DIR__.'/config/starmoozie/operations/'.$configFile,
-                'starmoozie.operations.'.substr($configFile, 0, strrpos($configFile, '.'))
+                __DIR__ . '/config/starmoozie/operations/' . $configFile,
+                'starmoozie.operations.' . substr($configFile, 0, strrpos($configFile, '.'))
             );
         }
     }
@@ -252,12 +258,12 @@ class StarmoozieServiceProvider extends ServiceProvider
     public function loadConfigs()
     {
         // use the vendor configuration file as fallback
-        $this->mergeConfigFrom(__DIR__.'/config/starmoozie/crud.php', 'starmoozie.crud');
-        $this->mergeConfigFrom(__DIR__.'/config/starmoozie/base.php', 'starmoozie.base');
+        $this->mergeConfigFrom(__DIR__ . '/config/starmoozie/crud.php', 'starmoozie.crud');
+        $this->mergeConfigFrom(__DIR__ . '/config/starmoozie/base.php', 'starmoozie.base');
         $this->mergeConfigFromOperationsDirectory();
 
         // add the root disk to filesystem configuration
-        app()->config['filesystems.disks.'.config('starmoozie.base.root_disk_name')] = [
+        app()->config['filesystems.disks.' . config('starmoozie.base.root_disk_name')] = [
             'driver' => 'local',
             'root'   => base_path(),
         ];
@@ -275,32 +281,32 @@ class StarmoozieServiceProvider extends ServiceProvider
 
         // add the starmoozie_users authentication provider to the configuration
         app()->config['auth.providers'] = app()->config['auth.providers'] +
-        [
-            'starmoozie' => [
-                'driver'  => 'eloquent',
-                'model'   => config('starmoozie.base.user_model_fqn'),
-            ],
-        ];
+            [
+                'starmoozie' => [
+                    'driver'  => 'eloquent',
+                    'model'   => config('starmoozie.base.user_model_fqn'),
+                ],
+            ];
 
         // add the starmoozie_users password broker to the configuration
         app()->config['auth.passwords'] = app()->config['auth.passwords'] +
-        [
-            'starmoozie' => [
-                'provider'  => 'starmoozie',
-                'table'     => 'password_resets',
-                'expire'   => 60,
-                'throttle' => config('starmoozie.base.password_recovery_throttle_notifications'),
-            ],
-        ];
+            [
+                'starmoozie' => [
+                    'provider'  => 'starmoozie',
+                    'table'     => 'password_resets',
+                    'expire'   => 60,
+                    'throttle' => config('starmoozie.base.password_recovery_throttle_notifications'),
+                ],
+            ];
 
         // add the starmoozie_users guard to the configuration
         app()->config['auth.guards'] = app()->config['auth.guards'] +
-        [
-            'starmoozie' => [
-                'driver'   => 'session',
-                'provider' => 'starmoozie',
-            ],
-        ];
+            [
+                'starmoozie' => [
+                    'driver'   => 'session',
+                    'provider' => 'starmoozie',
+                ],
+            ];
     }
 
     /**
@@ -308,7 +314,7 @@ class StarmoozieServiceProvider extends ServiceProvider
      */
     public function loadHelpers()
     {
-        require_once __DIR__.'/helpers.php';
+        require_once __DIR__ . '/helpers.php';
     }
 
     /**
