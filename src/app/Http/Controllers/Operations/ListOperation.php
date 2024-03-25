@@ -15,21 +15,21 @@ trait ListOperation
      */
     protected function setupListRoutes($segment, $routeName, $controller)
     {
-        Route::get($segment.'/', [
-            'as'        => $routeName.'.index',
-            'uses'      => $controller.'@index',
+        Route::get($segment . '/', [
+            'as'        => $routeName . '.index',
+            'uses'      => $controller . '@index',
             'operation' => 'list',
         ]);
 
-        Route::post($segment.'/search', [
-            'as'        => $routeName.'.search',
-            'uses'      => $controller.'@search',
+        Route::post($segment . '/search', [
+            'as'        => $routeName . '.search',
+            'uses'      => $controller . '@search',
             'operation' => 'list',
         ]);
 
-        Route::get($segment.'/{id}/details', [
-            'as'        => $routeName.'.showDetailsRow',
-            'uses'      => $controller.'@showDetailsRow',
+        Route::get($segment . '/{id}/details', [
+            'as'        => $routeName . '.showDetailsRow',
+            'uses'      => $controller . '@showDetailsRow',
             'operation' => 'list',
         ]);
     }
@@ -73,8 +73,8 @@ trait ListOperation
 
         $this->crud->applyUnappliedFilters();
 
-        $totalRows = $this->crud->model->count();
-        $filteredRows = $this->crud->query->toBase()->getCountForPagination();
+        // $totalRows = $this->crud->model->count('id');
+        $filteredRows = $this->crud->query->toBase()->getCountForPagination(['id']);
         $startIndex = request()->input('start') ?: 0;
         // if a search term was present
         if (request()->input('search') && request()->input('search')['value']) {
@@ -99,7 +99,7 @@ trait ListOperation
                 $column_number = (int) $order['column'];
                 $column_direction = (strtolower((string) $order['dir']) == 'asc' ? 'ASC' : 'DESC');
                 $column = $this->crud->findColumnById($column_number);
-                if ($column['tableColumn'] && ! isset($column['orderLogic'])) {
+                if ($column['tableColumn'] && !isset($column['orderLogic'])) {
                     // apply the current orderBy rules
                     $this->crud->orderByWithPrefix($column['name'], $column_direction);
                 }
@@ -124,13 +124,13 @@ trait ListOperation
                 || (isset($item['sql']) && str_contains($item['sql'], "$table.$key"));
         });
 
-        if (! $hasOrderByPrimaryKey) {
+        if (!$hasOrderByPrimaryKey) {
             $this->crud->orderByWithPrefix($this->crud->model->getKeyName(), 'DESC');
         }
 
         $entries = $this->crud->getEntries();
 
-        return $this->crud->getEntriesAsJsonForDatatables($entries, $totalRows, $filteredRows, $startIndex);
+        return $this->crud->getEntriesAsJsonForDatatables($entries, $filteredRows, $filteredRows, $startIndex);
     }
 
     /**

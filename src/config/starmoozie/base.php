@@ -142,7 +142,7 @@ return [
     ],
 
     // JS files that are loaded in all pages, using Laravel's mix() helper
-    'mix_scripts' => [// file_path => manifest_directory_path
+    'mix_scripts' => [ // file_path => manifest_directory_path
         // 'js/app.js' => '',
     ],
 
@@ -208,6 +208,12 @@ return [
     // Set this to false if you would like to skip adding the password recovery routes
     // (you then need to manually define the routes in your web.php)
     'setup_password_recovery_routes' => false,
+
+    'setup_email_verification_routes' => false,
+
+    'add_verified_to_backpack_middleware' => true,
+
+    'email_verification_throttle_access' => '1,10',
 
     /*
     |--------------------------------------------------------------------------

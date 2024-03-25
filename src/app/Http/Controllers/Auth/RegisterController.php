@@ -7,6 +7,8 @@ use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Validator;
+use Illuminate\Support\Facades\Cookie;
+use Illuminate\Support\Facades\Validator;
 
 class RegisterController extends Controller
 {
@@ -55,7 +57,7 @@ class RegisterController extends Controller
 
         return Validator::make($data, [
             'name'                             => 'required|max:255',
-            starmoozie_authentication_column()   => 'required|'.$email_validation.'max:255|unique:'.$users_table,
+            starmoozie_authentication_column()   => 'required|' . $email_validation . 'max:255|unique:' . $users_table,
             'password'                         => 'required|min:6|confirmed',
         ]);
     }
@@ -86,7 +88,7 @@ class RegisterController extends Controller
     public function showRegistrationForm()
     {
         // if registration is closed, deny access
-        if (! config('starmoozie.base.registration_open')) {
+        if (!config('starmoozie.base.registration_open')) {
             abort(403, trans('starmoozie::base.registration_closed'));
         }
 
@@ -104,7 +106,7 @@ class RegisterController extends Controller
     public function register(Request $request)
     {
         // if registration is closed, deny access
-        if (! config('starmoozie.base.registration_open')) {
+        if (!config('starmoozie.base.registration_open')) {
             abort(403, trans('starmoozie::base.registration_closed'));
         }
 
@@ -113,6 +115,13 @@ class RegisterController extends Controller
         $user = $this->create($request->all());
 
         event(new Registered($user));
+
+        if (config('starmoozie.base.setup_email_verification_routes')) {
+            Cookie::queue('starmoozie_email_verification', $user->{config('starmoozie.base.email_column')}, 30);
+
+            return redirect(route('verification.notice'));
+        }
+
         $this->guard()->login($user);
 
         return redirect($this->redirectPath());

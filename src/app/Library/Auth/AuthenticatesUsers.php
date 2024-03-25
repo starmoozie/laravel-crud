@@ -4,6 +4,7 @@ namespace Starmoozie\CRUD\app\Library\Auth;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 
@@ -39,14 +40,20 @@ trait AuthenticatesUsers
         // If the class is using the ThrottlesLogins trait, we can automatically throttle
         // the login attempts for this application. We'll key this by the username and
         // the IP address of the client making these requests into this application.
-        if (method_exists($this, 'hasTooManyLoginAttempts') &&
-            $this->hasTooManyLoginAttempts($request)) {
+        if (
+            method_exists($this, 'hasTooManyLoginAttempts') &&
+            $this->hasTooManyLoginAttempts($request)
+        ) {
             $this->fireLockoutEvent($request);
 
             return $this->sendLockoutResponse($request);
         }
 
         if ($this->attemptLogin($request)) {
+            if (config('starmoozie.base.setup_email_verification_routes', false)) {
+                $this->verifyUserBeforeLogin($request);
+            }
+
             return $this->sendLoginResponse($request);
         }
 
@@ -83,7 +90,8 @@ trait AuthenticatesUsers
     protected function attemptLogin(Request $request)
     {
         return $this->guard()->attempt(
-            $this->credentials($request), $request->filled('remember')
+            $this->credentials($request),
+            $request->filled('remember')
         );
     }
 
@@ -115,8 +123,8 @@ trait AuthenticatesUsers
         }
 
         return $request->wantsJson()
-                    ? new Response('', 204)
-                    : redirect()->intended($this->redirectPath());
+            ? new Response('', 204)
+            : redirect()->intended($this->redirectPath());
     }
 
     /**
@@ -198,5 +206,27 @@ trait AuthenticatesUsers
     protected function guard()
     {
         return Auth::guard();
+    }
+
+    private function verifyUserBeforeLogin(Request $request): Response|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+    {
+        $user = $this->guard()->user();
+
+        if ($user->email_verified_at) {
+            // if the user is verified send the normal login response
+            return $this->sendLoginResponse($request);
+        }
+
+        // user is not yet verified, log him out
+        $this->guard()->logout();
+
+        // add a cookie for 30m to remember the email address that needs to be verified
+        Cookie::queue('starmoozie_email_verification', $user->{config('starmoozie.base.email_column')}, 30);
+
+        if ($request->wantsJson()) {
+            return new Response('Email verification required', 403);
+        }
+
+        return redirect(route('verification.notice'));
     }
 }
